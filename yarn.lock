@@ -4274,7 +4274,7 @@ request@2.81.0:
     tunnel-agent "^0.6.0"
     uuid "^3.0.0"
 
-request@^2.74.0, request@^2.79.0, request@^2.83.0:
+request@^2.69.0, request@^2.74.0, request@^2.79.0, request@^2.83.0:
   version "2.83.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.83.0.tgz#ca0b65da02ed62935887808e6f510381034e3356"
   dependencies:
@@ -5263,6 +5263,12 @@ watch@~0.18.0:
   dependencies:
     exec-sh "^0.2.0"
     minimist "^1.2.0"
+
+web-request@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/web-request/-/web-request-1.0.7.tgz#b70c42b3cd455779e82db6886253b2491f2bd569"
+  dependencies:
+    request "^2.69.0"
 
 webidl-conversions@^4.0.1, webidl-conversions@^4.0.2:
   version "4.0.2"

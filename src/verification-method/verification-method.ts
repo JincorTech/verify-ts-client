@@ -1,10 +1,12 @@
-abstract class VerificationMethod {
+import { RequestOptions } from 'web-request';
+
+export default abstract class VerificationMethod {
   public static METHOD_EMAIL = 'email';
   public static METHOD_GOOGLE_AUTH = 'google_auth';
 
   public abstract getMethodType(): string;
 
-  public abstract getRequestParameters(): Array<any>;
+  public abstract getRequestParameters(): RequestOptions;
 
   public getAllowedMethods(): Array<string> {
     return [

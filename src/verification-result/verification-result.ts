@@ -9,7 +9,22 @@ class VerificationResult {
   private payload: string = '';
 
   //TODO: Implement constructor
-  constructor() { }
+  constructor(data: any) {
+    if (!data) {
+      return;
+    }
+
+    this.status = data.status;
+    const unwrappedData = data.data;
+    if (!unwrappedData) {
+      return;
+    }
+
+    this.consumer = unwrappedData.consumer;
+    this.verificationId = unwrappedData.verificationId;
+    this.expiredOn = unwrappedData.expiredOn;
+    this.payload = unwrappedData.payload || '';
+  }
 
   /**
    * Status
