@@ -2,44 +2,44 @@
 // import "core-js/fn/array.find"
 // ...
 
-import * as WebRequest from 'web-request';
-import VerifyService from './interfaces/verify-service';
-import VerificationMethod from './verification-method/verification-method';
-import VerificationDetailsCreator from './verification-details/verification-details-creator';
-import VerificationDetails from './verification-details/verification-details';
-import ValidationData from './validation-data/validation-data';
+import * as WebRequest from 'web-request'
+import VerifyService from './interfaces/verify-service'
+import VerificationMethod from './verification-method/verification-method'
+import VerificationDetailsCreator from './verification-details/verification-details-creator'
+import VerificationDetails from './verification-details/verification-details'
+import ValidationData from './validation-data/validation-data'
 
 /**
  * Class VerifyClient
  */
 export default class VerifyClient implements VerifyService {
-  constructor(jwtToken: string) {
+  constructor(private host: string, jwtToken: string) {
     WebRequest.defaults({
       throwResponseError: true,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`,
-        'Accept': 'application/vnd.jincor+json; version=1'
+        Authorization: `Bearer ${jwtToken}`,
+        Accept: 'application/vnd.jincor+json; version=1'
       }
-    });
+    })
   }
-  
+
   /**
-     * Initiate verification process
-     *
-     * @param {VerificationMethod} method Verification Method
-     *
-     * @return {VerificationDetails}
-     *
-     * @throws {Error}
-     */
+   * Initiate verification process
+   *
+   * @param {VerificationMethod} method Verification Method
+   *
+   * @return {VerificationDetails}
+   *
+   * @throws {Error}
+   */
   public async initiate(method: VerificationMethod): Promise<VerificationDetails> {
     const response = await WebRequest.post(
-      `/methods/${method.getMethodType()}/actions/initiate`,
-      method.getRequestParameters()
+      `${this.host}/methods/${method.getMethodType()}/actions/initiate`,
+      method.getRequestBody()
     )
 
-    return VerificationDetailsCreator.create(method.getMethodType(), response.content);
+    return VerificationDetailsCreator.create(method.getMethodType(), response.content)
   }
 
   /**
@@ -54,17 +54,19 @@ export default class VerifyClient implements VerifyService {
   public async validate(data: ValidationData): Promise<VerificationResult> {
     try {
       const response = await WebRequest.post(
-        `/methods/${data.getMethodType()}/verifiers/${data.getVerificationId()}/actions/validate`,
+        `${
+          this.host
+        }/methods/${data.getMethodType()}/verifiers/${data.getVerificationId()}/actions/validate`,
         data.getRequestParameters()
       )
 
-      return VerificationResult.fromJson(response.content);
+      return VerificationResult.fromJson(response.content)
     } catch (exception) {
       if (exception.statusCode === 422) {
-        throw new Error('Invalid Code');
+        throw new Error('Invalid Code')
       }
 
-      throw exception;
+      throw exception
     }
   }
 
@@ -77,10 +79,10 @@ export default class VerifyClient implements VerifyService {
    */
   public async invalidate(data: InvalidationData): Promise<boolean> {
     const response = await WebRequest.delete(
-      `/methods/${data.getMethodType()}/verifiers/${data.getVerificationId()}`
-    );
+      `${this.host}/methods/${data.getMethodType()}/verifiers/${data.getVerificationId()}`
+    )
 
-    return true;
+    return true
   }
 
   /**
@@ -89,11 +91,14 @@ export default class VerifyClient implements VerifyService {
    *
    * @return {VerificationDetails}
    */
-  public async getVerification(verificationId: string, methodType: string): Promise<VerificationDetails> {
+  public async getVerification(
+    verificationId: string,
+    methodType: string
+  ): Promise<VerificationDetails> {
     const response = await WebRequest.get(
-      `/methods/${methodType}/verifiers/${verificationId}`
+      `${this.host}/methods/${methodType}/verifiers/${verificationId}`
     )
 
-    return VerificationDetailsCreator.create(methodType, response.content);
+    return VerificationDetailsCreator.create(methodType, response.content)
   }
 }
