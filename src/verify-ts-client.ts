@@ -33,8 +33,7 @@ export default class VerifyClient implements VerifyService {
           method.getRequestParameters()
         )
 
-        const responseData = JSON.parse(response.content);
-        return VerificationDetailsCreator.create(method.getMethodType(), responseData);
+        return VerificationDetailsCreator.create(method.getMethodType(), response.content);
     }
 
     /**
@@ -54,8 +53,7 @@ export default class VerifyClient implements VerifyService {
           data.getRequestParameters()
         )
 
-        const responseData = JSON.parse(response.content);
-        return new VerificationResult(responseData);
+        return VerificationResult.fromJson(response.content);
       } catch (exception) {
         if (exception.statusCode === 422) {
           throw new Error('Invalid Code');
@@ -92,7 +90,7 @@ export default class VerifyClient implements VerifyService {
       const response = await WebRequest.get(
         `/methods/${methodType}/verifiers/${verificationId}`
       )
-      const responseData = JSON.parse(response.content);
-      return VerificationDetailsCreator.create(methodType, responseData);
+
+      return VerificationDetailsCreator.create(methodType, response.content);
     }
 }

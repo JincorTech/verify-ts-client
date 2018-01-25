@@ -67,13 +67,17 @@ export default abstract class VerificationDetails {
     return this.attempts;
   }
 
+  protected static validateBaseData(data: any) {
+    VerificationDetails.validateData(data, ['status', 'verificationId', 'expiredOn', 'consumer']);
+  }
+
   /**
      * @param {any} data
      * @param {any} requiredKeys
      *
      * @throws {Error}
      */
-  public validateData(data: any, requiredKeys: Array<string>) {
+  protected static validateData(data: any, requiredKeys: Array<string>) {
     requiredKeys.forEach((key) => {
       if (!data[key]) {
         throw new Error(`${key} field is required`);
