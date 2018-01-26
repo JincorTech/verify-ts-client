@@ -2,20 +2,19 @@
 // import "core-js/fn/array.find"
 // ...
 
-import VerifyClientInterface from './verify-client-interface'
-import InitiateData from './initiate-data'
-import InitiateResult from './initiate-result'
-import ValidateVerificationInput from './validate-verification-input'
-import ValidationResult from './validation-result'
-import VerificationData from './verification-data'
-import Result from './result'
-
 import * as request from 'web-request'
+import VerifyClientInterface from './verify-client-interface'
+import InitiateData from '../requests/initiate-data'
+import InitiateResult from '../responses/initiate-result'
+import ValidateVerificationInput from '../requests/validate-verification-input'
+import ValidationResult from '../responses/validation-result'
+import VerificationData from '../requests/verification-data'
+import Result from '../responses/result'
 import {
   MaxVerificationsAttemptsReached,
   NotCorrectVerificationCode,
   VerificationIsNotFound
-} from './exceptions'
+} from '../exceptions/exceptions'
 
 const QR = require('qr-image')
 
@@ -59,7 +58,7 @@ export class VerifyClient implements VerifyClientInterface {
     input: ValidateVerificationInput
   ): Promise<ValidationResult> {
     try {
-      return await request.json<ValidationResult>(
+      const response = await request.json<ValidationResult>(
         `/methods/${method}/verifiers/${id}/actions/validate`,
         {
           baseUrl: this.baseUrl,
@@ -70,6 +69,8 @@ export class VerifyClient implements VerifyClientInterface {
           body: input
         }
       )
+
+      return response
     } catch (e) {
       if (e.statusCode === 422) {
         if (e.response.body.data.attempts >= this.maxAttempts) {
@@ -100,13 +101,15 @@ export class VerifyClient implements VerifyClientInterface {
 
   async getVerification(method: string, id: string): Promise<ValidationResult> {
     try {
-      return await request.json<ValidationResult>(`/methods/${method}/verifiers/${id}`, {
+      const response = await request.json<ValidationResult>(`/methods/${method}/verifiers/${id}`, {
         baseUrl: this.baseUrl,
         auth: {
           bearer: this.authToken
         },
         method: 'GET'
       })
+
+      return response
     } catch (e) {
       if (e.statusCode === 404) {
         throw new VerificationIsNotFound('Code was expired or not found. Please retry')
@@ -136,7 +139,7 @@ export class VerifyClient implements VerifyClientInterface {
       throw new Error('Invalid verification payload')
     }
 
-    return await this.validateVerification(
+    const result = await this.validateVerification(
       inputVerification.method,
       inputVerification.verificationId,
       {
@@ -144,6 +147,8 @@ export class VerifyClient implements VerifyClientInterface {
         removeSecret
       }
     )
+
+    return result
   }
 }
 
