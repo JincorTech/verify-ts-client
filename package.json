@@ -35,7 +35,7 @@
   },
   "lint-staged": {
     "{src,test}/**/*.ts": [
-      "prettier --write --no-semi --single-quote",
+      "prettier --write --single-quote",
       "git add"
     ]
   },
@@ -106,6 +106,7 @@
   },
   "dependencies": {
     "nock": "^9.1.6",
+    "qr-image": "^3.2.0",
     "web-request": "^1.0.7"
   }
 }

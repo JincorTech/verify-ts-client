@@ -2,21 +2,26 @@
 // import "core-js/fn/array.find"
 // ...
 
-import * as request from 'web-request'
-import VerifyClientInterface from './verify-client-interface'
-import InitiateData from '../requests/initiate-data'
-import InitiateResult from '../responses/initiate-result'
-import ValidateVerificationInput from '../requests/validate-verification-input'
-import ValidationResult from '../responses/validation-result'
-import VerificationData from '../requests/verification-data'
-import Result from '../responses/result'
+import * as request from 'web-request';
+import VerifyClientInterface from './verify-client-interface';
+import InitiateData from '../requests/initiate-data';
+import InitiateResult from '../responses/initiate-result';
+import ValidateVerificationInput from '../requests/validate-verification-input';
+import ValidationResult from '../responses/validation-result';
+import VerificationData from '../requests/verification-data';
+import Result from '../responses/result';
 import {
   MaxVerificationsAttemptsReached,
   NotCorrectVerificationCode,
   VerificationIsNotFound
-} from '../exceptions/exceptions'
+} from '../exceptions/exceptions';
 
-const QR = require('qr-image')
+const QR = require('qr-image');
+
+enum VerificationTypes {
+  GoogleAuthVerification = 'google_auth',
+  EmailVerification = 'email'
+}
 
 export class VerifyClient implements VerifyClientInterface {
   constructor(private baseUrl: string, private authToken: string, private maxAttempts: number = 3) {
@@ -26,7 +31,7 @@ export class VerifyClient implements VerifyClientInterface {
         'Content-Type': 'application/json'
       },
       throwResponseError: true
-    })
+    });
   }
 
   async initiateVerification(method: string, data: InitiateData): Promise<InitiateResult> {
@@ -37,19 +42,19 @@ export class VerifyClient implements VerifyClientInterface {
       },
       method: 'POST',
       body: data
-    })
+    });
 
-    result.method = method
-    delete result.code
+    result.method = method;
+    delete result.code;
     if (result.totpUri) {
       const buffer = QR.imageSync(result.totpUri, {
         type: 'png',
         size: 20
-      })
-      result.qrPngDataUri = 'data:image/png;base64,' + buffer.toString('base64')
+      });
+      result.qrPngDataUri = 'data:image/png;base64,' + buffer.toString('base64');
     }
 
-    return result
+    return result;
   }
 
   async validateVerification(
@@ -68,24 +73,24 @@ export class VerifyClient implements VerifyClientInterface {
           method: 'POST',
           body: input
         }
-      )
+      );
 
-      return response
+      return response;
     } catch (e) {
       if (e.statusCode === 422) {
         if (e.response.body.data.attempts >= this.maxAttempts) {
-          await this.invalidateVerification(method, id)
-          throw new MaxVerificationsAttemptsReached('You have used all attempts to enter code')
+          await this.invalidateVerification(method, id);
+          throw new MaxVerificationsAttemptsReached('You have used all attempts to enter code');
         }
 
-        throw new NotCorrectVerificationCode('Not correct code')
+        throw new NotCorrectVerificationCode('Not correct code');
       }
 
       if (e.statusCode === 404) {
-        throw new VerificationIsNotFound('Code was expired or not found. Please retry')
+        throw new VerificationIsNotFound('Code was expired or not found. Please retry');
       }
 
-      throw e
+      throw e;
     }
   }
 
@@ -96,7 +101,7 @@ export class VerifyClient implements VerifyClientInterface {
         bearer: this.authToken
       },
       method: 'DELETE'
-    })
+    });
   }
 
   async getVerification(method: string, id: string): Promise<ValidationResult> {
@@ -107,15 +112,15 @@ export class VerifyClient implements VerifyClientInterface {
           bearer: this.authToken
         },
         method: 'GET'
-      })
+      });
 
-      return response
+      return response;
     } catch (e) {
       if (e.statusCode === 404) {
-        throw new VerificationIsNotFound('Code was expired or not found. Please retry')
+        throw new VerificationIsNotFound('Code was expired or not found. Please retry');
       }
 
-      throw e
+      throw e;
     }
   }
 
@@ -128,7 +133,7 @@ export class VerifyClient implements VerifyClientInterface {
     const verification = await this.getVerification(
       inputVerification.method,
       inputVerification.verificationId
-    )
+    );
 
     // JSON.stringify is the simplest method to check that 2 objects have same properties
     if (
@@ -136,7 +141,7 @@ export class VerifyClient implements VerifyClientInterface {
       verification.data.consumer !== consumer ||
       JSON.stringify(verification.data.payload) !== JSON.stringify(payload)
     ) {
-      throw new Error('Invalid verification payload')
+      throw new Error('Invalid verification payload');
     }
 
     const result = await this.validateVerification(
@@ -146,11 +151,11 @@ export class VerifyClient implements VerifyClientInterface {
         code: inputVerification.code,
         removeSecret
       }
-    )
+    );
 
-    return result
+    return result;
   }
 }
 
-const VerificationClientType = Symbol('VerificationClientInterface')
-export { VerificationClientType }
+const VerificationClientType = Symbol('VerificationClientInterface');
+export { VerificationClientType, VerificationTypes };
