@@ -1,28 +1,32 @@
+import VerificationMethod from '../verification-method/verification-method';
+import ValidationData from '../validation-data/validation-data';
+import VerificationDetails from '../verification-details/verification-details';
+
 /**
  * Interface VerifyServiceInterface
  */
-interface VerifyService {
+export default interface VerifyService {
 
   /**
   * @param {VerificationMethod} method
   *
   * @return {VerificationDetails}
   */
-  initiate(method: VerificationMethod): VerificationDetails;
+  initiate(method: VerificationMethod): Promise<VerificationDetails>;
 
   /**
   * @param {ValidationData} data
   *
   * @return {VerificationResult}
   */
-  validate(data: ValidationData): VerificationResult;
+  validate(data: ValidationData): Promise<VerificationResult>;
 
   /**
    * @param {InvalidationData} data
    *
    * @return {bool}
    */
-  invalidate(data: InvalidationData): boolean;
+  invalidate(data: InvalidationData): Promise<boolean>;
 
   /**
   * @param {string} verificationId
@@ -30,5 +34,5 @@ interface VerifyService {
   *
   * @return VerificationDetails
   */
-  getVerification(verificationId: string, methodType: string): VerificationDetails;
+  getVerification(verificationId: string, methodType: string): Promise<VerificationDetails>;
 }

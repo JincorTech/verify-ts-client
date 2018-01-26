@@ -1,7 +1,7 @@
 /**
  * Class VerificationDetails
  */
-abstract class VerificationDetails {
+export default abstract class VerificationDetails {
   protected status: string;
   protected verificationId: string;
   protected expiredOn: number;
@@ -9,8 +9,21 @@ abstract class VerificationDetails {
   protected payload: string = '';
   protected attempts: number;
 
-  //TODO: Implement constructor
-  constructor() { }
+  constructor(data: any) {
+    if (!data) {
+      return;
+    }
+
+    this.status = data.status;
+
+    const unwrappedData = data.data || data;
+
+    this.verificationId = data.verificationId;
+    this.expiredOn = data.expiredOn;
+    this.consumer = data.consumer;
+    this.payload = data.payload || '';
+    this.attempts = data.attempts;
+  }
 
   /**
    * @return {string}
@@ -52,5 +65,23 @@ abstract class VerificationDetails {
    */
   public getAttempts(): number {
     return this.attempts;
+  }
+
+  protected static validateBaseData(data: any) {
+    VerificationDetails.validateData(data, ['status', 'verificationId', 'expiredOn', 'consumer']);
+  }
+
+  /**
+     * @param {any} data
+     * @param {any} requiredKeys
+     *
+     * @throws {Error}
+     */
+  protected static validateData(data: any, requiredKeys: Array<string>) {
+    requiredKeys.forEach((key) => {
+      if (!data[key]) {
+        throw new Error(`${key} field is required`);
+      }
+    });
   }
 }
