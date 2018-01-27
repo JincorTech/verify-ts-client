@@ -4,7 +4,7 @@
 
 import * as request from 'web-request';
 import VerifyClientInterface from './verify-client-interface';
-import InitiateData from '../requests/initiate-data';
+import { InitiateData, VerificationTypes } from '../requests/initiate/initiate-data';
 import InitiateResult from '../responses/initiate-result';
 import ValidateVerificationInput from '../requests/validate-verification-input';
 import ValidationResult from '../responses/validation-result';
@@ -18,11 +18,6 @@ import {
 
 const QR = require('qr-image');
 
-enum VerificationTypes {
-  GoogleAuthVerification = 'google_auth',
-  EmailVerification = 'email'
-}
-
 export class VerifyClient implements VerifyClientInterface {
   constructor(private baseUrl: string, private authToken: string, private maxAttempts: number = 3) {
     request.defaults({
@@ -34,8 +29,8 @@ export class VerifyClient implements VerifyClientInterface {
     });
   }
 
-  async initiateVerification(method: string, data: InitiateData): Promise<InitiateResult> {
-    const result = await request.json<InitiateResult>(`/methods/${method}/actions/initiate`, {
+  async initiateVerification(data: InitiateData): Promise<InitiateResult> {
+    const result = await request.json<InitiateResult>(`/methods/${data.method}/actions/initiate`, {
       baseUrl: this.baseUrl,
       auth: {
         bearer: this.authToken
@@ -44,7 +39,7 @@ export class VerifyClient implements VerifyClientInterface {
       body: data
     });
 
-    result.method = method;
+    result.method = data.method;
     delete result.code;
     if (result.totpUri) {
       const buffer = QR.imageSync(result.totpUri, {
@@ -58,7 +53,7 @@ export class VerifyClient implements VerifyClientInterface {
   }
 
   async validateVerification(
-    method: string,
+    method: VerificationTypes,
     id: string,
     input: ValidateVerificationInput
   ): Promise<ValidationResult> {
@@ -94,7 +89,7 @@ export class VerifyClient implements VerifyClientInterface {
     }
   }
 
-  async invalidateVerification(method: string, id: string): Promise<void> {
+  async invalidateVerification(method: VerificationTypes, id: string): Promise<void> {
     await request.json<Result>(`/methods/${method}/verifiers/${id}`, {
       baseUrl: this.baseUrl,
       auth: {
@@ -104,7 +99,7 @@ export class VerifyClient implements VerifyClientInterface {
     });
   }
 
-  async getVerification(method: string, id: string): Promise<ValidationResult> {
+  async getVerification(method: VerificationTypes, id: string): Promise<ValidationResult> {
     try {
       const response = await request.json<ValidationResult>(`/methods/${method}/verifiers/${id}`, {
         baseUrl: this.baseUrl,
@@ -158,4 +153,4 @@ export class VerifyClient implements VerifyClientInterface {
 }
 
 const VerificationClientType = Symbol('VerificationClientInterface');
-export { VerificationClientType, VerificationTypes };
+export { VerificationClientType };

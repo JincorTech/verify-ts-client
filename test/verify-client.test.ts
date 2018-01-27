@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { VerifyClient, VerificationTypes } from '../src/client/verify-client';
+import { VerifyClient } from '../src/client/verify-client';
 import { initiate_200 } from './responses/verify-responses';
 
 /**
@@ -23,6 +23,6 @@ describe('Dummy test', () => {
   });
 
   // it("VerifyClient.initiate success", () => {
-  //   client.initiate(VerificationMethod.METHOD_EMAIL)
+  //   client.initiateVerification()
   // })
 });
