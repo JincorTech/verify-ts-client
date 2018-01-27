@@ -1,6 +1,6 @@
 import nock from 'nock';
 import { VerifyClient } from '../src/client/verify-client';
-import { initiate_200, validate_200 } from './responses/verify-responses';
+import { Verification, Validate_200 } from './responses/verify-responses';
 import { email_initiate, google_auth_initiate } from './requests/verify-requests';
 import EmailInitiateData from '../src/requests/initiate/email-initiate-data';
 import GoogleAuthInitiateData from '../src/requests/initiate/google-auth-initiate-data';
@@ -23,7 +23,7 @@ describe('Verify client test', () => {
         expect(body).toEqual(email_initiate);
         return true;
       })
-      .reply(200, initiate_200);
+      .reply(200, Verification);
 
     return client
       .initiateVerification(
@@ -34,7 +34,7 @@ describe('Verify client test', () => {
         })
       )
       .then(response => {
-        expect(response).toEqual({ ...initiate_200, method: 'email' });
+        expect(response).toEqual({ ...Verification, method: 'email' });
       });
   });
 
@@ -44,12 +44,12 @@ describe('Verify client test', () => {
         expect(body).toEqual(google_auth_initiate);
         return true;
       })
-      .reply(200, initiate_200);
+      .reply(200, Verification);
 
     return client
       .initiateVerification(new GoogleAuthInitiateData('Consumer', 'Issuer'))
       .then(response => {
-        expect(response).toEqual({ ...initiate_200, method: 'google_auth' });
+        expect(response).toEqual({ ...Verification, method: 'google_auth' });
       });
   });
 
@@ -62,7 +62,7 @@ describe('Verify client test', () => {
           return true;
         }
       )
-      .reply(200, validate_200);
+      .reply(200, Validate_200);
 
     return client
       .validateVerification(
@@ -71,7 +71,7 @@ describe('Verify client test', () => {
         { code: '123456' }
       )
       .then(response => {
-        expect(response).toEqual({ ...validate_200 });
+        expect(response).toEqual({ ...Validate_200 });
       });
   });
 
@@ -87,6 +87,18 @@ describe('Verify client test', () => {
       )
       .then(response => {
         expect(response).toEqual({ status: 200 });
+      });
+  });
+
+  it('VerifyClient.getVerification success', () => {
+    nockInstance
+      .get('/methods/email/verifiers/dc910ae0-7c67-4ace-8ebb-9edd4b5d8b0f')
+      .reply(200, Verification);
+
+    return client
+      .getVerification(VerificationTypes.EmailVerification, 'dc910ae0-7c67-4ace-8ebb-9edd4b5d8b0f')
+      .then(response => {
+        expect(response).toEqual(Verification);
       });
   });
 });

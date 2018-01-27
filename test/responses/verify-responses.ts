@@ -1,4 +1,4 @@
-export const initiate_200 = {
+export const Verification = {
   status: 200,
   verificationId: 'dc910ae0-7c67-4ace-8ebb-9edd4b5d8b0f',
   attempts: 0,
@@ -8,7 +8,7 @@ export const initiate_200 = {
   }
 };
 
-export const validate_200 = {
+export const Validate_200 = {
   status: 200,
   data: {
     verificationId: 'dc910ae0-7c67-4ace-8ebb-9edd4b5d8b0f',
