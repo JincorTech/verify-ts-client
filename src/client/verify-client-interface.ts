@@ -3,6 +3,7 @@ import InitiateResult from '../responses/initiate-result';
 import ValidateVerificationInput from '../requests/validate-verification-input';
 import ValidationResult from '../responses/validation-result';
 import VerificationData from '../requests/verification-data';
+import Result from '../responses/result';
 
 export default interface VerificationClientInterface {
   initiateVerification(data: InitiateData): Promise<InitiateResult>;
@@ -11,7 +12,7 @@ export default interface VerificationClientInterface {
     id: string,
     input: ValidateVerificationInput
   ): Promise<ValidationResult>;
-  invalidateVerification(method: string, id: string): Promise<void>;
+  invalidateVerification(method: string, id: string): Promise<Result>;
   getVerification(method: string, id: string): Promise<ValidationResult>;
   checkVerificationPayloadAndCode(
     input: VerificationData,

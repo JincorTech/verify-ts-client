@@ -89,14 +89,16 @@ export class VerifyClient implements VerifyClientInterface {
     }
   }
 
-  async invalidateVerification(method: VerificationTypes, id: string): Promise<void> {
-    await request.json<Result>(`/methods/${method}/verifiers/${id}`, {
+  async invalidateVerification(method: VerificationTypes, id: string): Promise<Result> {
+    const response = await request.json<Result>(`/methods/${method}/verifiers/${id}`, {
       baseUrl: this.baseUrl,
       auth: {
         bearer: this.authToken
       },
       method: 'DELETE'
     });
+
+    return response;
   }
 
   async getVerification(method: VerificationTypes, id: string): Promise<ValidationResult> {
