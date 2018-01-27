@@ -1,7 +1,6 @@
 import { InitiateData, VerificationTypes } from './initiate-data';
 
 export default abstract class InitiateDataBase implements InitiateData {
-  public consumer: string;
   public generateCode: {
     length: number;
     symbolSet: string[];
@@ -16,7 +15,7 @@ export default abstract class InitiateDataBase implements InitiateData {
   };
   public payload?: any;
 
-  constructor(public method: VerificationTypes, consumer: string) {}
+  constructor(public method: VerificationTypes, public consumer: string) {}
 
   public setConsumer(consumer: string) {
     this.consumer = consumer;
