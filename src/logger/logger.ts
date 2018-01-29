@@ -1,8 +1,8 @@
 import winston from 'winston';
 
 winston.configure({
-  level: 'debug',
-  transports: [new winston.transports.File({ filename: 'verify-ts-client.log' })]
+  level: 'warn',
+  transports: [new winston.transports.Console()]
 });
 
 export default winston;

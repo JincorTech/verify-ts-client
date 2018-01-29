@@ -15,11 +15,14 @@ import {
   NotCorrectVerificationCode,
   VerificationIsNotFound
 } from '../exceptions/exceptions';
-import logger from '../logger/logger';
+import defaultLoggerInstance from '../logger/logger';
+import { Winston, LoggerInstance } from 'winston';
 
 const QR = require('qr-image');
 
 export class VerifyClient implements VerifyClientInterface {
+  private logger: LoggerInstance = defaultLoggerInstance;
+
   constructor(private baseUrl: string, private authToken: string, private maxAttempts: number = 3) {
     request.defaults({
       headers: {
@@ -31,7 +34,7 @@ export class VerifyClient implements VerifyClientInterface {
   }
 
   async initiateVerification(data: InitiateData): Promise<InitiateResult> {
-    logger.log('info', `Initiate verification started with data: ${JSON.stringify(data)}`);
+    this.logger.log('info', `Initiate verification started with data: ${JSON.stringify(data)}`);
     const result = await request.json<InitiateResult>(`/methods/${data.method}/actions/initiate`, {
       baseUrl: this.baseUrl,
       auth: {
@@ -60,7 +63,7 @@ export class VerifyClient implements VerifyClientInterface {
     input: ValidateVerificationInput
   ): Promise<ValidationResult> {
     try {
-      logger.log('info', `validate verification started with data: ${JSON.stringify(input)}`);
+      this.logger.log('info', `validate verification started with data: ${JSON.stringify(input)}`);
       const response = await request.json<ValidationResult>(
         `/methods/${method}/verifiers/${id}/actions/validate`,
         {
@@ -80,18 +83,18 @@ export class VerifyClient implements VerifyClientInterface {
         if (e.response.body.data.attempts >= this.maxAttempts) {
           await this.invalidateVerification(method, id);
           const AttemptsError = 'You have used all attempts to enter code';
-          logger.log('error', `${ValidateVerificationError} ${AttemptsError}`);
+          this.logger.log('error', `${ValidateVerificationError} ${AttemptsError}`);
           throw new MaxVerificationsAttemptsReached(AttemptsError);
         }
 
         const IncorrectCodeError = 'Not correct code';
-        logger.log('error', `${ValidateVerificationError} ${IncorrectCodeError}`);
+        this.logger.log('error', `${ValidateVerificationError} ${IncorrectCodeError}`);
         throw new NotCorrectVerificationCode(IncorrectCodeError);
       }
 
       if (e.statusCode === 404) {
         const ExpiredCodeError = 'Code was expired or not found. Please retry';
-        logger.log('error', `${ValidateVerificationError} ${ExpiredCodeError}`);
+        this.logger.log('error', `${ValidateVerificationError} ${ExpiredCodeError}`);
         throw new VerificationIsNotFound();
       }
 
@@ -100,7 +103,7 @@ export class VerifyClient implements VerifyClientInterface {
   }
 
   async invalidateVerification(method: VerificationTypes, id: string): Promise<Result> {
-    logger.log('info', `Invalidate verification started with id: ${id}`);
+    this.logger.log('info', `Invalidate verification started with id: ${id}`);
     const response = await request.json<Result>(`/methods/${method}/verifiers/${id}`, {
       baseUrl: this.baseUrl,
       auth: {
@@ -114,7 +117,7 @@ export class VerifyClient implements VerifyClientInterface {
 
   async getVerification(method: VerificationTypes, id: string): Promise<ValidationResult> {
     try {
-      logger.log('info', `Getting verification started with id: ${id}`);
+      this.logger.log('info', `Getting verification started with id: ${id}`);
       const response = await request.json<ValidationResult>(`/methods/${method}/verifiers/${id}`, {
         baseUrl: this.baseUrl,
         auth: {
@@ -127,7 +130,7 @@ export class VerifyClient implements VerifyClientInterface {
     } catch (e) {
       if (e.statusCode === 404) {
         const ExpiredCodeError = 'Code was expired or not found. Please retry';
-        logger.log('error', `Getting verification error: ${ExpiredCodeError}`);
+        this.logger.log('error', `Getting verification error: ${ExpiredCodeError}`);
         throw new VerificationIsNotFound(ExpiredCodeError);
       }
 
@@ -141,7 +144,7 @@ export class VerifyClient implements VerifyClientInterface {
     payload: any,
     removeSecret?: boolean
   ): Promise<ValidationResult> {
-    logger.log(
+    this.logger.log(
       'info',
       `Checking verification payload started with data: ${JSON.stringify(
         inputVerification
@@ -159,7 +162,7 @@ export class VerifyClient implements VerifyClientInterface {
       JSON.stringify(verification.data.payload) !== JSON.stringify(payload)
     ) {
       const InvalidPayloadError = 'Invalid verification payload';
-      logger.log('error', `Checking verification payload error: ${InvalidPayloadError}`);
+      this.logger.log('error', `Checking verification payload error: ${InvalidPayloadError}`);
       throw new Error(InvalidPayloadError);
     }
 
@@ -173,6 +176,11 @@ export class VerifyClient implements VerifyClientInterface {
     );
 
     return result;
+  }
+
+  public setCustomLogger(winstonLoggerInstance: LoggerInstance): VerifyClient {
+    this.logger = winstonLoggerInstance;
+    return this;
   }
 }
 
