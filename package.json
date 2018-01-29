@@ -35,7 +35,7 @@
   },
   "lint-staged": {
     "{src,test}/**/*.ts": [
-      "prettier --write --no-semi --single-quote",
+      "prettier --write --single-quote",
       "git add"
     ]
   },
@@ -85,6 +85,7 @@
     "jest": "^22.0.2",
     "lint-staged": "^6.0.0",
     "lodash.camelcase": "^4.3.0",
+    "nock": "^9.1.6",
     "prettier": "^1.4.4",
     "prompt": "^1.0.0",
     "replace-in-file": "^3.0.0-beta.2",
@@ -105,7 +106,9 @@
     "validate-commit-msg": "^2.12.2"
   },
   "dependencies": {
-    "nock": "^9.1.6",
-    "web-request": "^1.0.7"
+    "@types/winston": "^2.3.7",
+    "qr-image": "^3.2.0",
+    "web-request": "^1.0.7",
+    "winston": "^2.4.0"
   }
 }
