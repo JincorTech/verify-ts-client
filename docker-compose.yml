@@ -1,0 +1,10 @@
+version: '1'
+services:
+
+verifyclient:
+  build:
+    context: ./
+    dockerfile: Dockerfile
+  volumes:
+    - ./:/usr/src/lib
+  tty: true
