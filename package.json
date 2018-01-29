@@ -106,7 +106,9 @@
     "validate-commit-msg": "^2.12.2"
   },
   "dependencies": {
+    "@types/winston": "^2.3.7",
     "qr-image": "^3.2.0",
-    "web-request": "^1.0.7"
+    "web-request": "^1.0.7",
+    "winston": "^2.4.0"
   }
 }
