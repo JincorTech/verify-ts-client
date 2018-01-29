@@ -1,11 +1,14 @@
 # Verify typescript client
 
-Typescript client for interaction with Verify service.
+Typescript client for interaction with [Verify service](https://github.com/JincorTech/backend-verify).
 
 ### Usage
 
 ```
-const client = new VerifyClient('http://verify:3000', 'jwt_token');
+const client = new VerifyClient('http://verify:3000', 'jwt_token').setCustomLogger(winston.configure({
+  level: 'warn',
+  transports: [new winston.transports.Console()]
+}));
 
 // Initiate verification
 client.initiateVerification(
