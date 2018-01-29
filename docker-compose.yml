@@ -1,7 +1,8 @@
 version: '2'
 services:
   verifyclient:
-    build: jincort/verify-ts-client
+    image: jincort/verify-ts-client
+    build:
       context: ./
       dockerfile: Dockerfile
     volumes:
