@@ -7,10 +7,6 @@ before_install:
 script:
 - docker-compose build verifyclient
 - docker-compose run --rm verifyclient sh -c "yarn && yarn test"
-- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ];  then echo "production"; elif ["$TRAVIS_BRANCH"
-  == "develop"]; then echo "stage"; else echo "dev-$(git rev-parse --short HEAD)"
-  ; fi`
-- "./build.sh $TAG"
 env:
   global:
   - secure: iav2owjHUd8+tPlyX+mzHmVayZJoGilep3A8/EvJIvb1t6Do39tQU4lSqd0LhJxg3mQh6kV2oBk0OZO8LInSD/XrGn1afuqWdPCNd02GbdqyBqZ5NiazpzL9mpiL8tAMQsfBtSe5sAkg47e9URzoUpXLNhg/6VD3iPqwBGOJ1eLvxiziotVeKlB+RweEUUCb6x/Mo4iEY0BRI+ciYW1pNXtKwHGYg35lxbG5vjJVl4p9LN0+J6D5gc9COHQNSqZDA3Y6CY3/Nxr6F/pHqgl5VycRXaGg4PcmnnB7RfaSgp/10x6pN1VB2pUcIj6d9JmdNKUPswX/E6b068IIuCHpuVw5BKKD/qGzLZufR+dLViFQjkZb9ZNXNbWpbyEH7JGewc7hkOPFDC9TW5Mn64SLRzs9IMzN2eEL3pkW0Tg36i1N/NTevZnxIsRGbRyLBYn4VItVe5eHQOheBTPmJ+Txb82cdPLhSv0WjvQtp25tAy34tfQVAoZ8Tiq07oTTFM41UTJhVLQCKp7bEO0MNUQzfXjpPZWyFsnyhn9ZBy9MJum4Ud41tmvedYVzDjzAKnnNXJlMpPdwb3nj2czYly2Man9wRbkSLKa7dnv08v2Y5I+UuVUZ7sgtjKH9OSghhvyjNvtR70YX6J6nBNPGnOZwNAuCM7Rq0JYuoRzh8fkWtUY=
