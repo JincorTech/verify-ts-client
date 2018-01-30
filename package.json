@@ -1,5 +1,5 @@
 {
-  "name": "verify-ts-client",
+  "name": "@jincor-tech/verify-ts-client",
   "version": "0.0.0",
   "description": "",
   "keywords": [],
@@ -17,6 +17,9 @@
   "license": "MIT",
   "engines": {
     "node": ">=6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
