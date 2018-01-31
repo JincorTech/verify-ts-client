@@ -1,6 +1,6 @@
 {
-  "name": "verify-ts-client",
-  "version": "0.0.0",
+  "name": "@jincor-tech/verify-ts-client",
+  "version": "0.1.0",
   "description": "",
   "keywords": [],
   "main": "dist/verify-ts-client.umd.js",
@@ -17,6 +17,9 @@
   "license": "MIT",
   "engines": {
     "node": ">=6.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "lint": "tslint -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
@@ -35,7 +38,7 @@
   },
   "lint-staged": {
     "{src,test}/**/*.ts": [
-      "prettier --write --no-semi --single-quote",
+      "prettier --write --single-quote",
       "git add"
     ]
   },
@@ -64,10 +67,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 90,
-        "functions": 95,
-        "lines": 95,
-        "statements": 95
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
       }
     },
     "collectCoverage": true,
@@ -85,6 +88,7 @@
     "jest": "^22.0.2",
     "lint-staged": "^6.0.0",
     "lodash.camelcase": "^4.3.0",
+    "nock": "^9.1.6",
     "prettier": "^1.4.4",
     "prompt": "^1.0.0",
     "replace-in-file": "^3.0.0-beta.2",
@@ -103,5 +107,11 @@
     "typedoc": "^0.9.0",
     "typescript": "^2.6.2",
     "validate-commit-msg": "^2.12.2"
+  },
+  "dependencies": {
+    "@types/winston": "^2.3.7",
+    "qr-image": "^3.2.0",
+    "web-request": "^1.0.7",
+    "winston": "^2.4.0"
   }
 }
