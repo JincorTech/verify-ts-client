@@ -3,14 +3,9 @@ services:
 - docker
 before_install:
 - docker login -u $DOCKER_USER -p $DOCKER_PASS
-- chmod ugo+x ./build.sh
 script:
 - docker-compose build verifyclient
 - docker-compose run --rm verifyclient sh -c "yarn && yarn test"
-- export TAG=`if [ "$TRAVIS_BRANCH" == "master" ];  then echo "production"; elif ["$TRAVIS_BRANCH"
-  == "develop"]; then echo "stage"; else echo "dev-$(git rev-parse --short HEAD)"
-  ; fi`
-- "./build.sh $TAG"
 env:
   global:
   - secure: Gtd2pE1KvyPg0aOMpRDzlcHxl4oBJ1TR7bUXOjIuoQY6pLe6MPN2XkyrF2Efqhcfyr7BQ9t9P41kXSdYaLsaq7UIFzXXtYRtAs1Wb2H7qDyckaJCFL1DtpxoVtqeB6cWm9DjhF1w72bZ5NzBT7a1zdEkPw6g7ZffaOw0StDxXpBumCYBHcAZTXrv3Vn+Ab4slBwxhBY3S+NkpmNmmPmK2nlrmDsIVE6Zs7ihJ5W7cOMX9nLuHklqZjf8wgAhvUfwijxLJznCue5dqLEhptQqSmqKdDOOEBfXK9jRCM77wlVFcQGb6JqNGtZc8wtKGYrWd3f5M6GCHOvXCGFHMp43jb9B76/J4xIWm1zA9dnmgQRFGtNUxyLwv4trTduu0s2+aeZFfNal67m8K6O0J+FQmAgF33xO7b5FTuxHajmwHNopQuLrVN+QlJanUUOvFpzMSuPNBZoNSu/BXju3TYvNgiobQ7Nu8AM9Med11RXVDSSVPkfKSu8SJreXq8d9f6yGhSbmftgm19t0WHa5CBQrBnpS5Q72mdvwhV44yYMMfQGnh4S4p4Ih2H50MG1WqFfJX2JIp4YfMnnU2aCVgQhhgGJwgnbLiF+U66I8tbRod+Ql4+HoqqNYbtUpJ8VRaDd6LFcgDkBTEXF/CoCnhLf02sHomuGFxAjXmGphAnCJiT4=
@@ -18,6 +13,7 @@ env:
 notifications:
   slack:
     secure: Uyn8tMIAUW5jAVM/aJkNmI8T/9T1BiskGMM2tuWf4D67h2F1Ue8wmFxcdJZwHMNQBGV1g/VDYqZIBDieLH4blqXFIKTQlmJEVwJ403jiKavpWY0QoU5Awoowd49EQN9rnkP2Nm6D3aVbXfnwoVcX9g9Z0by192xkNJgIm7zwZ47w5b9H6m3Rh6CFhb5Y5i9yu61+R6K09ZtLpoGjADqlVp9UrLCJnyCKRte6h4ODLEmksWagBKckBAe91x7T2ZXvWZjqi66koeEIQT6r3S34bnC6vdwwG1YJK2GlV0D4EAXLzIbraJVTT9aVOaQX5TGAJ1lCJi73NL1UULcQ07eYlSSPNCUf6c0UYqshiffZuxYytP5leG63CCm8826j0uFN+iSHyk6j4OZMMuGDjkr2uN4zJqg4lvB848kzbC+nNYku7Rnodfe1IDUFq2RtI1S9PvKW+PJ/SU+8WOlYp2DY45K9vqzVTJtlrKsspQ74w9+NKgQF8gFI+vAOXt+JqybUbWu5RtOMycTNMhedOj8aiYMX3zR1vqnFhaMdThOTwgkOSsRGNnmbytaD/B0/VLcb4aee5RCTh8pcO6yPT8yEvQC6857yEeGWnRciFE9yxIPP+JHBORDzCQmfm2Lb+owg5Qowdvjta8JddhYmR+XvFuBMh61zYS7tPettCwP2yxk=
+before_deploy: "docker-compose run --rm verifyclient sh -c 'yarn build'"
 deploy:
   provider: npm
   email: aleksand-isaev@yandex.ru
