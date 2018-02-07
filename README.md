@@ -1,5 +1,7 @@
 # Verify typescript client
 
+[![Build Status](https://travis-ci.org/JincorTech/verify-ts-client.svg?branch=develop)](https://travis-ci.org/JincorTech/verify-ts-client)
+
 Typescript client for interaction with [Verify service](https://github.com/JincorTech/backend-verify).
 
 ### Usage
